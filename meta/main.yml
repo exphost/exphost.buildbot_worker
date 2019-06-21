@@ -1,0 +1,4 @@
+dependencies:
+  - role: exphost.create_user
+    user: "{{app.value['buildbot.slave'].user}}"
+
