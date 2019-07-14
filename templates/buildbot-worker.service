@@ -1,0 +1,12 @@
+[Unit]
+Description=Buildbot
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=simple
+User={{app.value.buildbot_worker.user.user}}
+ExecStart={{_app_dir}}/venv/bin/buildbot-worker start --nodaemon {{_app_dir}}
+ExecStop={{_app_dir}}/venv/bin/buildbot-worker stop {{_app_dir}}
+
+[Install]
+WantedBy=multi-user.target

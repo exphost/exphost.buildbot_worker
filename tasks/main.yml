@@ -4,15 +4,15 @@
 - name: system pkgs install (python, gcc)
   yum:
     name:
-      - "python{{app.value['buildbot.slave'].configs.python|replace('.','')}}"
-      - "python{{app.value['buildbot.slave'].configs.python|replace('.','')}}-setuptools"
-      - "python{{app.value['buildbot.slave'].configs.python|replace('.','')}}-devel"
+      - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}"
+      - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}-setuptools"
+      - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}-devel"
       - gcc
   become: True
 
 - name: set app dir value
   set_fact:
-    _app_dir: "{{app.value['buildbot.slave'].user.home}}/{{app.key}}"
+    _app_dir: "{{app.value.buildbot_worker.user.home}}/{{app.key}}"
 
 - block:
   - name: create dir for app
@@ -22,30 +22,52 @@
 
   - name: install pip
     vars:
-      ansible_python_interpreter: "/usr/bin/python{{app.value['buildbot.slave'].configs.python}}"
+      ansible_python_interpreter: "/usr/bin/python{{app.value.buildbot_worker.configs.python}}"
     pip:
       name: "pip"
       state: latest
       virtualenv: "{{_app_dir}}/venv"
-      virtualenv_command: "/usr/bin/python{{app.value['buildbot.slave'].configs.python}} -m venv"
+      virtualenv_command: "/usr/bin/python{{app.value.buildbot_worker.configs.python}} -m venv"
 
   - name: install buildbot worker
     vars:
-      ansible_python_interpreter: "/usr/bin/python{{app.value['buildbot.slave'].configs.python}}"
+      ansible_python_interpreter: "/usr/bin/python{{app.value.buildbot_worker.configs.python}}"
     pip:
       name: "buildbot-worker"
       virtualenv: "{{_app_dir}}/venv"
-      virtualenv_command: "/usr/bin/python{{app.value['buildbot.slave'].configs.python}} -m venv"
+      virtualenv_command: "/usr/bin/python{{app.value.buildbot_worker.configs.python}} -m venv"
 
-      #  - name: create worker
-      #    command: "{{_app_dir}}/venv/bin/buildbot create-master {{_app_dir}}"
-      #    args:
-      #      creates: "{{_app_dir}}/state.sqlite"
   - name: deb master
     debug:
-      msg: "{{app.value['buildbot.slave'].configs.master.app_name}}"
+       msg: "{{app.value.buildbot_worker.configs.master.app_name}}"
+
+  - name: get master endpoint
+    set_fact:
+      _master_endpoint: '{{hostvars|dict2items|json_query("[?value.apps."+app.value.buildbot_worker.configs.master.app_name+" != null].value.apps."+app.value.buildbot_worker.configs.master.app_name+".buildbot_master.endpoints.pb")|first}}'
+ 
+  - name: create worker
+    command: "{{_app_dir}}/venv/bin/buildbot-worker create-worker {{_app_dir}} {{_master_endpoint.address}}:{{_master_endpoint.port}} {{inventory_hostname}}-{{app.key}} {{app.value.buildbot_worker.configs.master.pass}}"
+    args:
+      creates: "{{_app_dir}}/buildbot.tac"
   
-  - pause:
+  become: True
+  become_user: "{{app.value.buildbot_worker.user.user}}"
+
+- block:
+    - name: copy service
+      template:
+        src: buildbot-worker.service
+        dest: "/etc/systemd/system/{{app.value.buildbot_worker.user.user}}_buildbot-worker.service"
+      notify:
+        - daemon reload
+        - buildbot restart
+
+    - meta: flush_handlers
+
+    - name: start buildbot`
+      service:
+        name: "{{app.value.buildbot_worker.user.user}}_buildbot-worker.service"
+        state: started
+        enabled: True
 
   become: True
-  become_user: "{{app.value['buildbot.slave'].user.user}}"

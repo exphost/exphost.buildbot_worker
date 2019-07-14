@@ -1,0 +1,11 @@
+- name: daemon reload
+  systemd:
+    daemon_reload: yes
+    name: "{{app.value.buildbot_worker.user.user}}_buildbot-worker.service"
+  become: True
+
+- name: buildbot restart
+  service:
+    name: "{{app.value.buildbot_worker.user.user}}_buildbot-worker"
+    state: restarted
+  become: True
