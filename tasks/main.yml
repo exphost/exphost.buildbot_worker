@@ -10,6 +10,12 @@
       - gcc
   become: True
 
+- name: install packages (TODO move to another roles)
+  yum:
+    name:
+      - rpmdevtools
+  become: True
+
 - name: set app dir value
   set_fact:
     _app_dir: "{{app.value.buildbot_worker.user.home}}/{{app.key}}"
