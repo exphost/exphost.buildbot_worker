@@ -49,7 +49,7 @@
 
   - name: get master endpoint
     set_fact:
-      _master_endpoint: '{{hostvars|dict2items|json_query("[?value.apps."+app.value.buildbot_worker.configs.master.app_name+" != null].value.apps."+app.value.buildbot_worker.configs.master.app_name+".buildbot_master.endpoints.pb")|first}}'
+      _master_endpoint: '{{hostvars|dict2items|json_query("[?value.apps."+app.value.buildbot_worker.configs.master.app_name+" != null].value.apps."+app.value.buildbot_worker.configs.master.app_name+".endpoints.pb")|first}}'
  
   - name: create worker
     command: "{{_app_dir}}/venv/bin/buildbot-worker create-worker {{_app_dir}} {{_master_endpoint.address}}:{{_master_endpoint.port}} {{inventory_hostname}}-{{app.key}} {{app.value.buildbot_worker.configs.master.pass}}"
