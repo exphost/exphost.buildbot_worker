@@ -8,6 +8,7 @@
       - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}-setuptools"
       - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}-devel"
       - gcc
+      - git
   become: True
 
 - name: install packages (TODO move to another roles)
