@@ -53,7 +53,7 @@
       _master_endpoint: '{{hostvars|dict2items|json_query("[?value.apps."+app.value.buildbot_worker.configs.master.app_name+" != null].value.apps."+app.value.buildbot_worker.configs.master.app_name+".endpoints.pb")|first}}'
  
   - name: create worker
-    command: "{{_app_dir}}/venv/bin/buildbot-worker create-worker {{_app_dir}} {{_master_endpoint.address}}:{{_master_endpoint.port}} {{inventory_hostname}}-{{app.key}} {{app.value.buildbot_worker.configs.master.pass}}"
+    command: "{{_app_dir}}/venv/bin/buildbot-worker create-worker {{_app_dir}} {{_master_endpoint.address}}:{{_master_endpoint.port}} {{inventory_hostname.split('.')[0]}}-{{app.key}} {{app.value.buildbot_worker.configs.master.pass}}"
     args:
       creates: "{{_app_dir}}/buildbot.tac"
   
