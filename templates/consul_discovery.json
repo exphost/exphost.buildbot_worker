@@ -1,0 +1,17 @@
+{
+  "services": [
+  {
+    "name": "buildbot_worker-{{app.key}}",
+    "tags": ["buildbot", "buildbot_worker"],
+    "port": 0,
+    "checks": [
+    {
+      "args": ["systemctl", "status", "buildbot_hello_slave_buildbot-worker"],
+      "interval": "5s",
+      "timeout": "1s"
+    }
+    ]
+  }
+  ]
+}
+
