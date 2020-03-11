@@ -1,3 +1,18 @@
+galaxy_info:
+  role_name: buildbot_worker
+  author: TORGiren
+  description: Buildbot worker role
+  company: exphost
+  license: MIT
+  min_ansible_version: 2.8
+  platforms:
+    - name: el
+      versions:
+        - 7
+  galaxy_tags:
+    - fabsible
+    - buildbot
+
 dependencies:
   - role: exphost.create_user
     user: "{{app.value.buildbot_worker.user}}"
