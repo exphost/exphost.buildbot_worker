@@ -15,6 +15,9 @@
   yum:
     name:
       - rpmdevtools
+      - libvirt-client
+      - libvirt-devel
+      - libselinux-python
   become: True
 
 - name: set app dir value
