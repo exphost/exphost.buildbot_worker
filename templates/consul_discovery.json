@@ -6,7 +6,7 @@
     "port": 0,
     "checks": [
     {
-      "args": ["systemctl", "status", "buildbot_hello_slave_buildbot-worker"],
+      "args": ["systemctl", "status", "{{app.value.buildbot_worker.user.user}}_buildbot-worker"],
       "interval": "5s",
       "timeout": "1s"
     }
