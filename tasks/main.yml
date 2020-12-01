@@ -9,6 +9,11 @@
       - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}-devel"
       - gcc
       - git
+      - libselinux-python
+      - genisoimage
+      - libxslt
+      - sshpass
+
   become: True
 
 - name: install packages (TODO move to another roles)
