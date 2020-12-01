@@ -30,6 +30,16 @@
       path: "{{_app_dir}}"
       state: directory
 
+  - name: create .ssh dir
+    file:
+      path: "{{app.value.buildbot_worker.user.home}}/.ssh"
+      state: directory
+
+  - name: generate ssh key
+    openssh_keypair:
+      path: "{{app.value.buildbot_worker.user.home}}/.ssh/id_rsa"
+      comment: "{{inventory_hostname}}-{{app.value.buildbot_worker.user.user}}"
+
   - name: install pip
     vars:
       ansible_python_interpreter: "/usr/bin/python{{app.value.buildbot_worker.configs.python}}"
