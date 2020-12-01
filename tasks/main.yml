@@ -10,9 +10,6 @@
       - gcc
       - git
       - libselinux-python
-      - genisoimage
-      - libxslt
-      - sshpass
 
   become: True
 
@@ -23,6 +20,9 @@
       - libvirt-client
       - libvirt-devel
       - libselinux-python
+      - genisoimage
+      - libxslt
+      - sshpass
   become: True
 
 - name: set app dir value
