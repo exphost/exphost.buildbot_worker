@@ -30,6 +30,7 @@
         - genisoimage
         - libxslt
         - sshpass
+        - terraform
   become: True
 
 - name: set app dir value
