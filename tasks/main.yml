@@ -1,28 +1,35 @@
 - name: debug
   debug:
     msg: "jeste buildbote sleve"
-- name: system pkgs install (python, gcc)
-  yum:
-    name:
-      - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}"
-      - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}-setuptools"
-      - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}-devel"
-      - gcc
-      - git
-      - libselinux-python
+- block:
+  - name: system pkgs install (python, gcc)
+    yum:
+      name:
+        - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}"
+        - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}-setuptools"
+        - "python{{app.value.buildbot_worker.configs.python|replace('.','')}}-devel"
+        - gcc
+        - git
+        - libselinux-python
 
-  become: True
+  - name: add hashicord repo (TODO move to another role)
+    yum_repository:
+      name: hashicord
+      description: Hashicorp repo
+      baseurl: https://rpm.releases.hashicorp.com/RHEL/$releasever/$basearch/stable
+      gpgcheck: True
+      gpgkey: https://rpm.releases.hashicorp.com/gpg
 
-- name: install packages (TODO move to another roles)
-  yum:
-    name:
-      - rpmdevtools
-      - libvirt-client
-      - libvirt-devel
-      - libselinux-python
-      - genisoimage
-      - libxslt
-      - sshpass
+  - name: install packages (TODO move to another roles)
+    yum:
+      name:
+        - rpmdevtools
+        - libvirt-client
+        - libvirt-devel
+        - libselinux-python
+        - genisoimage
+        - libxslt
+        - sshpass
   become: True
 
 - name: set app dir value
